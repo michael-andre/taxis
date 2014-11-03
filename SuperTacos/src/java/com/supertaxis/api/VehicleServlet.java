@@ -7,7 +7,6 @@ package com.supertaxis.api;
 
 import com.supertaxis.db.DataRepository;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author Michaël
  */
 public class VehicleServlet extends HttpServlet {
+
+    static private final Pattern LOCATION_PATTERN = Pattern.compile("^(\\d+\\.\\d+),(\\d+\\.\\d+)$");
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -52,8 +53,7 @@ public class VehicleServlet extends HttpServlet {
             throw new ServletException("Invalid location", ex);
         }*/
         
-        Pattern pattern = Pattern.compile("^(\\d+\\.\\d+),(\\d+\\.\\d+)$");
-        Matcher matcher = pattern.matcher(request.getParameter("location"));
+        Matcher matcher = LOCATION_PATTERN.matcher(request.getParameter("location"));
         if (matcher.matches()) {
             try {
                 lat = Double.parseDouble(matcher.group(1));

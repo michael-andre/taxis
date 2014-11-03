@@ -70,9 +70,10 @@ public class DataRepository {
         
         try (Connection connection = openConnection()) {
             try (PreparedStatement stmt = connection.prepareStatement(
-                    "SELECT *, X(location) AS lng, Y(location) AS lat, MAX(timestamp) AS timestamp"
+                    "SELECT *, X(location) AS lng, Y(location) AS lat, timestamp"
                     + " FROM vehicles"
                     + " LEFT JOIN vehicle_locations ON id = vehicle_id"
+                    + " WHERE timestamp = (SELECT MAX(timestamp) FROM vehicle_locations"
                     + " GROUP BY id"
             )) {
                 try (ResultSet res = stmt.executeQuery()) {
