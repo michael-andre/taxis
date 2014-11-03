@@ -70,7 +70,7 @@ public class DataRepository {
         
         try (Connection connection = openConnection()) {
             try (PreparedStatement stmt = connection.prepareStatement(
-                    "SELECT *, X(position) AS lng, Y(position) AS lat, MAX(timestamp) AS timestamp"
+                    "SELECT *, X(location) AS lng, Y(location) AS lat, MAX(timestamp) AS timestamp"
                     + " FROM vehicles"
                     + " LEFT JOIN vehicle_locations ON id = vehicle_id"
                     + " GROUP BY id"
@@ -95,6 +95,22 @@ public class DataRepository {
                 }
             }
         }
+        
     }
     
+    public void updateVehicleLocation(long vehicleId, double lat, double lng) throws SQLException {
+        try (Connection connection = openConnection()) {
+            try (PreparedStatement stmt = connection.prepareStatement(
+                    "INSERT INTO vehicle_locations (vehicle_id, timestamp, location) VALUES"
+                    + " (?, NOW(), POINT(?, ?));"
+            )) {
+                stmt.setLong(1, vehicleId);
+                stmt.setDouble(2, lng);
+                stmt.setDouble(3, lat);
+                stmt.execute();
+            }
+        }
+            
+    }
+
 }
